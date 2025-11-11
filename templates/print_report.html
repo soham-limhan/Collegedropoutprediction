@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EduSafe Report</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @media print { .no-print { display: none; } }
+  </style>
+</head>
+<body class="p-6">
+  <div class="flex items-center justify-between mb-4">
+    <h1 class="text-2xl font-bold">EduSafe- Dropout Predictions Report</h1>
+    <button class="no-print px-3 py-2 bg-gray-800 text-white rounded" onclick="window.print()">Print</button>
+  </div>
+  <div id="summary" class="mb-4"></div>
+  <div class="overflow-x-auto">
+    <table class="min-w-full text-sm">
+      <thead class="bg-gray-100">
+        <tr>
+          <th class="text-left px-3 py-2">Name</th>
+          <th class="text-left px-3 py-2">Gender</th>
+          <th class="text-left px-3 py-2">Age</th>
+          <th class="text-left px-3 py-2">Absences</th>
+          <th class="text-left px-3 py-2">Aggregate Grade</th>
+          <th class="text-left px-3 py-2">Risk</th>
+        </tr>
+      </thead>
+      <tbody id="rows" class="divide-y"></tbody>
+    </table>
+  </div>
+  <script src="{{ url_for('static', filename='js/print_report.js') }}"></script>
+</body>
+</html>

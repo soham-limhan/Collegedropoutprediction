@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Students - EduSafe</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+    body { font-family: 'Inter', sans-serif; background: #f4f6f9; }
+    .card { background: white; border-radius: 1rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,.1), 0 2px 4px -2px rgba(0,0,0,.1); }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  </head>
+  <body class="p-4 md:p-8">
+    <div class="flex items-center justify-between mb-6">
+      <h1 class="text-2xl md:text-3xl font-extrabold text-blue-800">Full list of students</h1>
+      <a class="text-blue-600 hover:underline" href="/">Back to Home</a>
+    </div>
+    <div class="p-4 card">
+      <div class="mb-3 flex items-center gap-2">
+        <input id="searchInput" type="text" class="border rounded p-2 w-full md:w-96" placeholder="Search by name..." />
+        <button id="searchBtn" class="px-3 py-2 bg-blue-600 text-white rounded">Search</button>
+        <button id="clearBtn" class="px-3 py-2 bg-gray-100 border rounded">Clear</button>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="min-w-full text-sm">
+          <thead class="bg-gray-100 text-gray-700">
+            <tr>
+              <th class="text-left px-3 py-2">#</th>
+              <th class="text-left px-3 py-2">Name</th>
+              <th class="text-left px-3 py-2">Gender</th>
+              <th class="text-left px-3 py-2">Age</th>
+              <th class="text-left px-3 py-2">Absences</th>
+              <th class="text-left px-3 py-2">Aggregate Grade</th>
+              <th class="text-left px-3 py-2">Risk</th>
+              <th class="text-left px-3 py-2">Note</th>
+              <th class="text-left px-3 py-2"></th>
+            </tr>
+          </thead>
+          <tbody id="rows" class="divide-y"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/students_view.js') }}"></script>
+  </body>
+</html>
