@@ -5,180 +5,241 @@ HOME_HTML = """
 <head>
     <meta charset=\"UTF-8\">
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">
-    <title>Dropic.ai Dropout Predictions</title>
+    <title>Dropic.ai — Dropout Predictions</title>
     <script src=\"https://cdn.tailwindcss.com\"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
-        body { font-family: 'Inter', sans-serif; }
-        .card { background-color: white; border-radius: 1rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1); transition: transform .15s ease, box-shadow .15s ease; }
-        .card:hover { transform: translateY(-2px); box-shadow: 0 8px 16px -4px rgba(0,0,0,0.12), 0 6px 10px -6px rgba(0,0,0,0.1); }
-        input, select { transition: box-shadow .2s ease, border-color .2s ease; }
-        input:focus, select:focus { outline: none; box-shadow: 0 0 0 3px rgba(59,130,246,.25); border-color: #3b82f6; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        body { font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+        .mesh-bg {
+            background-color: #f0f4fb;
+            background-image:
+                radial-gradient(ellipse 85% 55% at 50% -18%, rgba(99, 102, 241, 0.13), transparent),
+                radial-gradient(ellipse 50% 32% at 100% 0%, rgba(14, 165, 233, 0.09), transparent),
+                radial-gradient(ellipse 45% 28% at 0% 100%, rgba(129, 140, 248, 0.08), transparent);
+        }
+        .surface-card {
+            background: rgba(255,255,255,0.94);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(226, 232, 240, 0.95);
+            border-radius: 1.125rem;
+            box-shadow: 0 1px 2px rgba(15,23,42,0.04), 0 14px 36px -12px rgba(15,23,42,0.1);
+            transition: transform .2s ease, box-shadow .2s ease;
+        }
+        .surface-card:hover { transform: translateY(-1px); box-shadow: 0 10px 32px -10px rgba(15,23,42,0.14); }
+        input:not([type="checkbox"]):not([type="radio"]), select {
+            transition: border-color .2s, box-shadow .2s, background .2s;
+        }
+        input:not([type="checkbox"]):not([type="radio"]):focus, select:focus {
+            outline: none;
+            border-color: #a5b4fc !important;
+            background: #fff !important;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.18);
+        }
+        .section-title { letter-spacing: -0.02em; }
     </style>
     <script src=\"https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js\"></script>
 </head>
-<body class=\"min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-4 md:p-8\">
+<body class=\"mesh-bg min-h-screen text-slate-800 p-4 md:p-6 lg:p-10\">
     <div class=\"max-w-7xl mx-auto\">
     <!-- Top Bar with Expanding Menu -->
-    <div class=\"flex items-center justify-between mb-6\">
-        <div class=\"flex items-center gap-3\">
-            <button id=\"menuToggle\" aria-label=\"Open menu\" class=\"p-2 rounded-md border border-gray-300 hover:bg-gray-100\">
+    <header class=\"surface-card rounded-2xl px-4 py-4 md:px-6 md:py-5 mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between\">
+        <div class=\"flex items-center gap-4 min-w-0\">
+            <button id=\"menuToggle\" aria-label=\"Open menu\" class=\"shrink-0 p-2.5 rounded-xl border border-slate-200/90 bg-white/90 text-slate-700 shadow-sm hover:bg-slate-50 hover:border-slate-300 transition\">
                 <svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"1.5\" stroke=\"currentColor\" class=\"w-6 h-6\">
                     <path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5\" />
                 </svg>
             </button>
-            <h1 class=\"text-2xl md:text-4xl font-extrabold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent\">Dropic.ai- Dropout Predictions</h1>
+            <div class=\"min-w-0\">
+                <p class=\"text-xs font-semibold uppercase tracking-wider text-indigo-600/90 mb-0.5\">Dropic.ai</p>
+                <h1 class=\"section-title text-2xl md:text-3xl lg:text-4xl font-extrabold bg-gradient-to-r from-indigo-600 via-violet-600 to-sky-600 bg-clip-text text-transparent\">Dropout risk overview</h1>
+                <p class=\"text-sm text-slate-500 mt-1 hidden sm:block\">Track cohort risk and run quick predictions in one place.</p>
+            </div>
         </div>
-        <div class=\"hidden md:block\"><a href=\"/dashboard\" class=\"text-blue-600 hover:underline\">Go to Dashboard</a></div>
-    </div>
+        <div class=\"flex items-center gap-2 sm:gap-3\">
+            <a href=\"/dashboard\" class=\"inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50 hover:border-slate-300 transition\">Dashboard</a>
+            <a href=\"/students_view\" class=\"inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-indigo-500/25 hover:from-indigo-500 hover:to-violet-500 transition\">Student list</a>
+        </div>
+    </header>
 
     <!-- Expanding Menu Panel -->
-    <div id=\"menuPanel\" class=\"hidden mb-6 p-4 card\">
+    <div id=\"menuPanel\" class=\"hidden mb-8 p-5 md:p-6 surface-card\">
+        <p class=\"text-xs font-semibold uppercase tracking-wide text-slate-500 mb-3\">Quick actions</p>
         <div class=\"grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3\">
-            <button id=\"btnListStudents\" class=\"py-2 px-3 rounded-lg bg-blue-600 text-white hover:bg-blue-700 active:scale-95 transition text-sm\">Full list of students</button>
-            <button id=\"btnAddStudent\" class=\"py-2 px-3 rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 active:scale-95 transition text-sm\">Add student</button>
-            <button id=\"btnDeleteStudent\" class=\"py-2 px-3 rounded-lg bg-rose-600 text-white hover:bg-rose-700 active:scale-95 transition text-sm\">Delete student</button>
-            <button id=\"btnPrintReport\" class=\"py-2 px-3 rounded-lg bg-gray-700 text-white hover:bg-gray-800 active:scale-95 transition text-sm\">Print report</button>
+            <button id=\"btnListStudents\" class=\"group flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-gradient-to-br from-indigo-600 to-indigo-700 text-white text-sm font-semibold shadow-md shadow-indigo-500/20 hover:from-indigo-500 hover:to-indigo-600 active:scale-[0.98] transition\">Full list</button>
+            <button id=\"btnAddStudent\" class=\"flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white text-sm font-semibold shadow-md shadow-emerald-500/20 hover:from-emerald-400 hover:to-teal-500 active:scale-[0.98] transition\">Add student</button>
+            <button id=\"btnDeleteStudent\" class=\"flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-gradient-to-br from-rose-500 to-rose-600 text-white text-sm font-semibold shadow-md shadow-rose-500/20 hover:from-rose-400 hover:to-rose-500 active:scale-[0.98] transition\">Delete</button>
+            <button id=\"btnPrintReport\" class=\"flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-slate-800 text-white text-sm font-semibold shadow-md hover:bg-slate-700 active:scale-[0.98] transition\">Print report</button>
         </div>
         <!-- Inline delete controls (toggle visible on click) -->
-        <div id=\"deleteControls\" class=\"hidden mt-4 border rounded-lg p-3\">
-            <div class=\"text-sm text-gray-700 mb-2\">Delete by index (0-based) or by name (first match):</div>
+        <div id=\"deleteControls\" class=\"hidden mt-5 rounded-xl border border-rose-100 bg-rose-50/50 p-4\">
+            <div class=\"text-sm text-slate-700 mb-3 font-medium\">Delete by index (0-based) or by name (first match)</div>
             <div class=\"flex flex-col sm:flex-row gap-2\">
-                <input id=\"delIndex\" type=\"number\" placeholder=\"Index e.g. 0\" class=\"p-2 border rounded-md w-full sm:w-48\" />
-                <input id=\"delName\" type=\"text\" placeholder=\"Name (optional)\" class=\"p-2 border rounded-md w-full\" />
-                <button id=\"confirmDelete\" class=\"py-2 px-3 rounded-lg bg-rose-600 text-white hover:bg-rose-700\">Delete</button>
+                <input id=\"delIndex\" type=\"number\" placeholder=\"Index e.g. 0\" class=\"p-2.5 border border-slate-200 rounded-xl w-full sm:w-48 bg-white/80\" />
+                <input id=\"delName\" type=\"text\" placeholder=\"Name (optional)\" class=\"p-2.5 border border-slate-200 rounded-xl w-full bg-white/80\" />
+                <button id=\"confirmDelete\" class=\"py-2.5 px-4 rounded-xl bg-rose-600 text-white font-semibold hover:bg-rose-500 transition shrink-0\">Delete</button>
             </div>
-            <div id=\"deleteResult\" class=\"mt-2 text-sm\"></div>
+            <div id=\"deleteResult\" class=\"mt-3 text-sm\"></div>
         </div>
     </div>
 
     <!-- Risk Summary Graph -->
-    <div class=\"p-6 card mb-8\">
-        <h2 class=\"text-2xl font-bold text-blue-700 mb-2\">Overall Risk Summary</h2>
-        <p class=\"text-gray-600 mb-4\">Total students: <span id=\"totalStudents\" class=\"font-semibold\">0</span></p>
-        <div class=\"grid grid-cols-1 md:grid-cols-3 gap-4 mb-4\">
-            <div class=\"p-4 rounded-lg bg-red-50 border border-red-200 hover:shadow-md transition\">
-                <div class=\"text-sm text-red-700 font-semibold\">Red (High Risk)</div>
-                <div id=\"countRed\" class=\"text-2xl font-extrabold text-red-700\">0</div>
+    <div class=\"p-6 md:p-8 surface-card mb-10\">
+        <div class=\"flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2 mb-6\">
+            <div>
+                <h2 class=\"section-title text-xl md:text-2xl font-bold text-slate-900\">Overall risk summary</h2>
+                <p class=\"text-slate-500 text-sm mt-1\">Live counts from your cohort</p>
             </div>
-            <div class=\"p-4 rounded-lg bg-yellow-50 border border-yellow-200 hover:shadow-md transition\">
-                <div class=\"text-sm text-yellow-700 font-semibold\">Yellow (Medium Risk)</div>
-                <div id=\"countYellow\" class=\"text-2xl font-extrabold text-yellow-700\">0</div>
+            <p class=\"text-sm text-slate-600\">Total students <span id=\"totalStudents\" class=\"font-bold tabular-nums text-indigo-700 text-lg\">0</span></p>
+        </div>
+        <div class=\"grid grid-cols-1 md:grid-cols-3 gap-4 mb-6\">
+            <div class=\"relative overflow-hidden rounded-2xl border border-red-100 bg-gradient-to-br from-red-50 to-white p-5 shadow-sm hover:shadow-md transition\">
+                <div class=\"text-xs font-bold uppercase tracking-wide text-red-600/90\">High risk</div>
+                <div class=\"text-sm text-red-700/80 mt-1\">Red zone</div>
+                <div id=\"countRed\" class=\"text-3xl font-extrabold text-red-700 tabular-nums mt-2\">0</div>
             </div>
-            <div class=\"p-4 rounded-lg bg-green-50 border border-green-200 hover:shadow-md transition\">
-                <div class=\"text-sm text-green-700 font-semibold\">Green (Low Risk)</div>
-                <div id=\"countGreen\" class=\"text-2xl font-extrabold text-green-700\">0</div>
+            <div class=\"relative overflow-hidden rounded-2xl border border-amber-100 bg-gradient-to-br from-amber-50 to-white p-5 shadow-sm hover:shadow-md transition\">
+                <div class=\"text-xs font-bold uppercase tracking-wide text-amber-700\">Medium</div>
+                <div class=\"text-sm text-amber-800/80 mt-1\">Yellow zone</div>
+                <div id=\"countYellow\" class=\"text-3xl font-extrabold text-amber-700 tabular-nums mt-2\">0</div>
+            </div>
+            <div class=\"relative overflow-hidden rounded-2xl border border-emerald-100 bg-gradient-to-br from-emerald-50 to-white p-5 shadow-sm hover:shadow-md transition\">
+                <div class=\"text-xs font-bold uppercase tracking-wide text-emerald-700\">Low risk</div>
+                <div class=\"text-sm text-emerald-800/80 mt-1\">Green zone</div>
+                <div id=\"countGreen\" class=\"text-3xl font-extrabold text-emerald-700 tabular-nums mt-2\">0</div>
             </div>
         </div>
-        <canvas id=\"riskChart\" height=\"100\"></canvas>
+        <div class=\"rounded-xl border border-slate-100 bg-slate-50/50 p-4\">
+            <canvas id=\"riskChart\" height=\"100\"></canvas>
+        </div>
     </div>
 
-    <div class=\"grid grid-cols-1 lg:grid-cols-2 gap-8\">
+    <div class=\"grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10\">
         <!-- Add Student -->
-        <div class=\"p-6 card\">
-            <h2 class=\"text-2xl font-bold text-blue-700 mb-4 border-b pb-2\">Add Student</h2>
+        <div class=\"p-6 md:p-8 surface-card\">
+            <div class=\"flex items-center gap-3 mb-6 pb-4 border-b border-slate-100\">
+                <span class=\"flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-100 text-indigo-700 font-bold text-sm\">+</span>
+                <div>
+                    <h2 class=\"section-title text-xl font-bold text-slate-900\">Add student</h2>
+                    <p class=\"text-sm text-slate-500\">Register and score a new learner</p>
+                </div>
+            </div>
             <form id=\"addStudentForm\" class=\"space-y-4\">
                 <div>
-                    <label class=\"block text-sm font-medium text-gray-700\">Name</label>
-                    <input type=\"text\" name=\"name\" required class=\"mt-1 block w-full rounded-lg border-gray-300 p-2 border\" placeholder=\"Ritika Singh\" />
+                    <label class=\"block text-sm font-semibold text-slate-700\">Name</label>
+                    <input type=\"text\" name=\"name\" required class=\"mt-1.5 block w-full rounded-xl border border-slate-200 bg-slate-50/80 p-2.5 text-slate-900\" placeholder=\"Ritika Singh\" />
                 </div>
                 <div class=\"grid grid-cols-2 gap-4\">
                     <div>
-                        <label class=\"block text-sm font-medium text-gray-700\">Gender</label>
-                        <select name=\"gender\" class=\"mt-1 block w-full rounded-lg border-gray-300 p-2 border\"><option value=\"F\">Female</option><option value=\"M\">Male</option></select>
+                        <label class=\"block text-sm font-semibold text-slate-700\">Gender</label>
+                        <select name=\"gender\" class=\"mt-1.5 block w-full rounded-xl border border-slate-200 bg-slate-50/80 p-2.5\"><option value=\"F\">Female</option><option value=\"M\">Male</option></select>
                     </div>
                     <div>
-                        <label class=\"block text-sm font-medium text-gray-700\">Age</label>
-                        <input type=\"number\" name=\"age\" min=\"10\" max=\"60\" value=\"18\" class=\"mt-1 block w-full rounded-lg border-gray-300 p-2 border\" />
+                        <label class=\"block text-sm font-semibold text-slate-700\">Age</label>
+                        <input type=\"number\" name=\"age\" min=\"10\" max=\"60\" value=\"18\" class=\"mt-1.5 block w-full rounded-xl border border-slate-200 bg-slate-50/80 p-2.5\" />
                     </div>
                 </div>
                 <div>
-                    <label class=\"block text-sm font-medium text-gray-700\">Absences</label>
-                    <input type=\"number\" name=\"absences\" min=\"0\" max=\"365\" value=\"0\" class=\"mt-1 block w-full rounded-lg border-gray-300 p-2 border\" />
+                    <label class=\"block text-sm font-semibold text-slate-700\">Absences</label>
+                    <input type=\"number\" name=\"absences\" min=\"0\" max=\"365\" value=\"0\" class=\"mt-1.5 block w-full rounded-xl border border-slate-200 bg-slate-50/80 p-2.5\" />
                 </div>
-                <div class=\"grid grid-cols-3 gap-4\">
+                <div class=\"grid grid-cols-1 sm:grid-cols-3 gap-4\">
                     <div>
-                        <label class=\"block text-sm font-medium text-gray-700\">Aggregate Grade (0-20)</label>
-                        <input type=\"number\" step=\"0.1\" name=\"aggregate_grade\" min=\"0\" max=\"20\" value=\"12\" class=\"mt-1 block w-full rounded-lg border-gray-300 p-2 border\" />
+                        <label class=\"block text-sm font-semibold text-slate-700\">Aggregate (0–20)</label>
+                        <input type=\"number\" step=\"0.1\" name=\"aggregate_grade\" min=\"0\" max=\"20\" value=\"12\" class=\"mt-1.5 block w-full rounded-xl border border-slate-200 bg-slate-50/80 p-2.5\" />
                     </div>
                     <div>
-                        <label class=\"block text-sm font-medium text-gray-700\">Internet Access</label>
-                        <select name=\"internet_access\" class=\"mt-1 block w-full rounded-lg border-gray-300 p-2 border\"><option value=\"yes\">Yes</option><option value=\"no\">No</option></select>
+                        <label class=\"block text-sm font-semibold text-slate-700\">Internet</label>
+                        <select name=\"internet_access\" class=\"mt-1.5 block w-full rounded-xl border border-slate-200 bg-slate-50/80 p-2.5\"><option value=\"yes\">Yes</option><option value=\"no\">No</option></select>
                     </div>
                     <div>
-                        <label class=\"block text-sm font-medium text-gray-700\">Desired Risk Zone (optional)</label>
-                        <select name=\"desired_risk_zone\" class=\"mt-1 block w-full rounded-lg border-gray-300 p-2 border\">
-                            <option value=\"\">-- None --</option>
+                        <label class=\"block text-sm font-semibold text-slate-700\">Desired zone (opt.)</label>
+                        <select name=\"desired_risk_zone\" class=\"mt-1.5 block w-full rounded-xl border border-slate-200 bg-slate-50/80 p-2.5\">
+                            <option value=\"\">— None —</option>
                             <option value=\"Red\">Red</option>
                             <option value=\"Yellow\">Yellow</option>
                             <option value=\"Green\">Green</option>
                         </select>
                     </div>
                 </div>
-                <button type=\"submit\" class=\"w-full py-2 px-4 rounded-lg text-white bg-blue-600 hover:bg-blue-700\">Add Student</button>
+                <button type=\"submit\" class=\"w-full py-3 px-4 rounded-xl font-semibold text-white bg-gradient-to-r from-indigo-600 to-violet-600 shadow-md shadow-indigo-500/25 hover:from-indigo-500 hover:to-violet-500 transition\">Add student</button>
             </form>
-            <div id=\"addStudentResult\" class=\"mt-4 text-sm text-gray-700\"></div>
+            <div id=\"addStudentResult\" class=\"mt-4 rounded-xl border border-slate-100 bg-slate-50/80 px-4 py-3 text-sm text-slate-700 min-h-[2.5rem]\"></div>
         </div>
 
         <!-- Quick Predictor -->
-        <div class=\"p-6 card\">
-            <h2 class=\"text-2xl font-bold text-blue-700 mb-4 border-b pb-2\">Quick Predictor</h2>
+        <div class=\"p-6 md:p-8 surface-card\">
+            <div class=\"flex items-center gap-3 mb-6 pb-4 border-b border-slate-100\">
+                <span class=\"flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700\">
+                    <svg class=\"w-5 h-5\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M13 10V3L4 14h7v7l9-11h-7z\"/></svg>
+                </span>
+                <div>
+                    <h2 class=\"section-title text-xl font-bold text-slate-900\">Quick predictor</h2>
+                    <p class=\"text-sm text-slate-500\">Instant risk without saving a record</p>
+                </div>
+            </div>
             <form id=\"quickPredictForm\" class=\"space-y-4\">
                 <div class=\"grid grid-cols-2 gap-4\">
                     <div>
-                        <label class=\"block text-sm font-medium text-gray-700\">Age</label>
-                        <input type=\"number\" name=\"age\" value=\"18\" class=\"mt-1 block w-full rounded-lg border-gray-300 p-2 border\" />
+                        <label class=\"block text-sm font-semibold text-slate-700\">Age</label>
+                        <input type=\"number\" name=\"age\" value=\"18\" class=\"mt-1.5 block w-full rounded-xl border border-slate-200 bg-slate-50/80 p-2.5\" />
                     </div>
                     <div>
-                        <label class=\"block text-sm font-medium text-gray-700\">Gender</label>
-                        <select name=\"gender\" class=\"mt-1 block w-full rounded-lg border-gray-300 p-2 border\"><option value=\"F\">Female</option><option value=\"M\">Male</option></select>
+                        <label class=\"block text-sm font-semibold text-slate-700\">Gender</label>
+                        <select name=\"gender\" class=\"mt-1.5 block w-full rounded-xl border border-slate-200 bg-slate-50/80 p-2.5\"><option value=\"F\">Female</option><option value=\"M\">Male</option></select>
                     </div>
                 </div>
-                <div class=\"grid grid-cols-3 gap-4\">
+                <div class=\"grid grid-cols-3 gap-3\">
                     <div>
-                        <label class=\"block text-sm font-medium text-gray-700\">GPA</label>
-                        <input type=\"number\" step=\"0.01\" min=\"0\" max=\"4\" name=\"gpa\" value=\"3.0\" class=\"mt-1 block w-full rounded-lg border-gray-300 p-2 border\" />
+                        <label class=\"block text-sm font-semibold text-slate-700\">GPA</label>
+                        <input type=\"number\" step=\"0.01\" min=\"0\" max=\"4\" name=\"gpa\" value=\"3.0\" class=\"mt-1.5 block w-full rounded-xl border border-slate-200 bg-slate-50/80 p-2.5 text-sm\" />
                     </div>
                     <div>
-                        <label class=\"block text-sm font-medium text-gray-700\">Absences</label>
-                        <input type=\"number\" min=\"0\" name=\"absences\" value=\"5\" class=\"mt-1 block w-full rounded-lg border-gray-300 p-2 border\" />
+                        <label class=\"block text-sm font-semibold text-slate-700\">Absences</label>
+                        <input type=\"number\" min=\"0\" name=\"absences\" value=\"5\" class=\"mt-1.5 block w-full rounded-xl border border-slate-200 bg-slate-50/80 p-2.5 text-sm\" />
                     </div>
                     <div>
-                        <label class=\"block text-sm font-medium text-gray-700\">Study Hours</label>
-                        <input type=\"number\" min=\"0\" name=\"study_hours\" value=\"20\" class=\"mt-1 block w-full rounded-lg border-gray-300 p-2 border\" />
+                        <label class=\"block text-sm font-semibold text-slate-700\">Study hrs</label>
+                        <input type=\"number\" min=\"0\" name=\"study_hours\" value=\"20\" class=\"mt-1.5 block w-full rounded-xl border border-slate-200 bg-slate-50/80 p-2.5 text-sm\" />
                     </div>
                 </div>
                 <div>
-                    <label class=\"block text-sm font-medium text-gray-700\">Financial Aid</label>
-                    <select name=\"financial_aid\" class=\"mt-1 block w-full rounded-lg border-gray-300 p-2 border\"><option value=\"1\">Yes</option><option value=\"0\">No</option></select>
+                    <label class=\"block text-sm font-semibold text-slate-700\">Financial aid</label>
+                    <select name=\"financial_aid\" class=\"mt-1.5 block w-full rounded-xl border border-slate-200 bg-slate-50/80 p-2.5\"><option value=\"1\">Yes</option><option value=\"0\">No</option></select>
                 </div>
-                <button type=\"submit\" class=\"w-full py-2 px-4 rounded-lg text-white bg-emerald-600 hover:bg-emerald-700\">Predict</button>
+                <button type=\"submit\" class=\"w-full py-3 px-4 rounded-xl font-semibold text-white bg-gradient-to-r from-emerald-500 to-teal-600 shadow-md shadow-emerald-500/20 hover:from-emerald-400 hover:to-teal-500 transition\">Run prediction</button>
             </form>
-            <div id=\"quickPredictResult\" class=\"mt-4 p-4 border rounded-lg hidden\"></div>
+            <div id=\"quickPredictResult\" class=\"mt-4 rounded-xl border border-slate-200 bg-white p-4 text-sm font-medium text-slate-800 hidden\"></div>
         </div>
     </div>
 
     <!-- Mentor Advice Chatbot -->
-    <div id="mentorPanel" class="mt-8 p-6 card hidden">
-        <h2 class="text-2xl font-bold text-blue-700 mb-4 border-b pb-2">Mentor AI Assistant</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div class="md:col-span-1">
-                <label class="block text-sm font-medium text-gray-700">Choose Student</label>
-                <select id="mentorStudent" class="mt-1 block w-full rounded-lg border-gray-300 p-2 border"></select>
-                <div class="text-xs text-gray-500 mt-1">Or enter a name below</div>
-                <input id="mentorName" type="text" placeholder="Type full name (optional)" class="mt-1 block w-full rounded-lg border-gray-300 p-2 border" />
-                <button id="askAdvice" class="mt-3 w-full py-2 px-4 rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 active:scale-95 transition">Get Mentor Advice</button>
+    <div id="mentorPanel" class="mt-10 p-6 md:p-8 surface-card hidden ring-1 ring-violet-200/60">
+        <div class="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100">
+            <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-100 text-violet-700 text-lg">✦</span>
+            <div>
+                <h2 class="section-title text-xl font-bold text-slate-900">Mentor AI</h2>
+                <p class="text-sm text-slate-500">Tailored guidance for the selected student</p>
+            </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="md:col-span-1 space-y-3">
+                <label class="block text-sm font-semibold text-slate-700">Student</label>
+                <select id="mentorStudent" class="block w-full rounded-xl border border-slate-200 bg-slate-50/80 p-2.5"></select>
+                <p class="text-xs text-slate-500">Or type a full name</p>
+                <input id="mentorName" type="text" placeholder="Full name (optional)" class="block w-full rounded-xl border border-slate-200 bg-slate-50/80 p-2.5" />
+                <button id="askAdvice" class="w-full py-3 px-4 rounded-xl font-semibold text-white bg-gradient-to-r from-violet-600 to-indigo-600 shadow-md shadow-violet-500/25 hover:from-violet-500 hover:to-indigo-500 active:scale-[0.99] transition">Get advice</button>
             </div>
             <div class="md:col-span-2">
-                <div id="adviceBox" class="p-4 border rounded-lg bg-gray-50 text-sm min-h-24">Select a student and click Get Mentor Advice.</div>
+                <div id="adviceBox" class="min-h-[8rem] rounded-2xl border border-slate-100 bg-gradient-to-br from-slate-50 to-white p-5 text-sm text-slate-700 leading-relaxed shadow-inner">Select a student and click Get advice.</div>
             </div>
         </div>
     </div>
 
     <!-- Floating action button to open Mentor AI -->
     <button id="openMentor" aria-expanded="false" aria-controls="mentorPanel" title="Open Mentor AI"
-            class="fixed bottom-6 right-6 px-4 py-3 rounded-full shadow-lg text-white bg-indigo-600 hover:bg-indigo-700 active:scale-95 transition focus:outline-none">
-        Mentor AI
+            class="fixed bottom-6 right-6 z-40 flex items-center gap-2 pl-4 pr-5 py-3 rounded-full shadow-xl shadow-indigo-500/30 text-white bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 active:scale-95 transition focus:outline-none focus:ring-2 focus:ring-violet-400 focus:ring-offset-2">
+        <svg class="w-5 h-5 opacity-90" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+        <span class="font-semibold text-sm">Mentor AI</span>
     </button>
 
     </div>
@@ -336,15 +397,22 @@ HOME_HTML = """
                 financial_aid: form.financial_aid.value,
             };
             const box = document.getElementById('quickPredictResult');
-            box.className = 'mt-4 p-4 border rounded-lg';
+            box.classList.remove('hidden');
+            box.className = 'mt-4 rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm font-medium text-slate-700';
             box.textContent = 'Predicting...';
             try {
                 const res = await fetch('/predict', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
                 const data = await res.json();
                 if (!res.ok) throw new Error(data.error || 'Unknown error');
                 box.classList.remove('hidden');
+                const high = Number(data.probability) > 50;
+                box.className = high
+                    ? 'mt-4 rounded-xl border border-red-200 bg-red-50/90 p-4 text-sm font-semibold text-red-900'
+                    : 'mt-4 rounded-xl border border-emerald-200 bg-emerald-50/90 p-4 text-sm font-semibold text-emerald-900';
                 box.textContent = `${data.prediction_text} (${data.probability}%)`;
             } catch (err) {
+                box.classList.remove('hidden');
+                box.className = 'mt-4 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm font-medium text-amber-900';
                 box.textContent = 'Prediction failed: ' + err.message;
             }
         }
@@ -944,75 +1012,86 @@ DASHBOARD_HTML = """
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI College Dropout Predictor</title>
-    <!-- Load Tailwind CSS -->
+    <title>Student Success — Dropic.ai</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Load Inter font -->
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f4f6f9;
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        body { font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+        .mesh-bg {
+            background-color: #f0f4fb;
+            background-image:
+                radial-gradient(ellipse 85% 55% at 50% -18%, rgba(99, 102, 241, 0.13), transparent),
+                radial-gradient(ellipse 50% 32% at 100% 0%, rgba(14, 165, 233, 0.09), transparent);
         }
-        .card {
-            background-color: white;
-            border-radius: 1rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+        .surface-card {
+            background: rgba(255,255,255,0.94);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(226, 232, 240, 0.95);
+            border-radius: 1.125rem;
+            box-shadow: 0 1px 2px rgba(15,23,42,0.04), 0 14px 36px -12px rgba(15,23,42,0.1);
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: #a5b4fc !important;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.18);
         }
     </style>
     <!-- Load Chart.js for interactive charts -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
 </head>
-<body class="p-4 md:p-8">
+<body class="mesh-bg min-h-screen text-slate-800 p-4 md:p-8 lg:p-10">
 
-    <header class="text-center mb-8">
-        <h1 class="text-4xl font-extrabold text-blue-800">Student Success AI Dashboard</h1>
-        <p class="text-gray-600 mt-2">Predicting college dropout risk using machine learning.</p>
-        <div class="mt-3">
-            <a href="/" class="text-blue-600 hover:underline">Back to Home</a>
+    <header class="surface-card rounded-2xl px-6 py-8 mb-10 text-center max-w-3xl mx-auto">
+        <p class="text-xs font-bold uppercase tracking-widest text-indigo-600 mb-2">Analytics</p>
+        <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight bg-gradient-to-r from-indigo-600 via-violet-600 to-sky-600 bg-clip-text text-transparent">Student success dashboard</h1>
+        <p class="text-slate-600 mt-3 text-sm md:text-base max-w-xl mx-auto">Explore dropout signals by gender and absences, then run individual risk checks.</p>
+        <div class="mt-6 flex flex-wrap items-center justify-center gap-3">
+            <a href="/" class="inline-flex rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50 transition">← Home</a>
+            <a href="/students_view" class="inline-flex rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 px-5 py-2.5 text-sm font-semibold text-white shadow-md shadow-indigo-500/25 hover:from-indigo-500 hover:to-violet-500 transition">Student list</a>
         </div>
     </header>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         
         <!-- SIDEBAR: PREDICTION TOOL -->
-        <div class="lg:col-span-1 p-6 card h-fit sticky top-8">
-            <h2 class="text-2xl font-bold text-blue-700 mb-4 border-b pb-2">Individual Risk Predictor</h2>
+        <div class="lg:col-span-1 p-6 md:p-8 surface-card h-fit lg:sticky lg:top-8">
+            <h2 class="text-xl font-bold text-slate-900 mb-1 tracking-tight">Risk predictor</h2>
+            <p class="text-sm text-slate-500 mb-6 pb-4 border-b border-slate-100">Enter metrics to estimate dropout probability</p>
             <form id="predictionForm" class="space-y-4">
                 
                 <!-- Age -->
                 <div>
-                    <label for="age" class="block text-sm font-medium text-gray-700">Age</label>
+                    <label for="age" class="block text-sm font-semibold text-slate-700">Age</label>
                     <input type="number" id="age" name="age" required min="18" max="60" value="20"
-                           class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border">
+                           class="mt-1.5 block w-full rounded-xl border border-slate-200 bg-slate-50/80 p-2.5">
                 </div>
                 
                 <!-- GPA -->
                 <div>
-                    <label for="gpa" class="block text-sm font-medium text-gray-700">Current GPA (0.0 to 4.0)</label>
+                    <label for="gpa" class="block text-sm font-semibold text-slate-700">GPA (0–4)</label>
                     <input type="number" id="gpa" name="gpa" required step="0.01" min="0" max="4.0" value="3.0"
-                           class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border">
+                           class="mt-1.5 block w-full rounded-xl border border-slate-200 bg-slate-50/80 p-2.5">
                 </div>
                 
                 <!-- Absences -->
                 <div>
-                    <label for="absences" class="block text-sm font-medium text-gray-700">Total Absences</label>
+                    <label for="absences" class="block text-sm font-semibold text-slate-700">Absences</label>
                     <input type="number" id="absences" name="absences" required min="0" max="100" value="5"
-                           class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border">
+                           class="mt-1.5 block w-full rounded-xl border border-slate-200 bg-slate-50/80 p-2.5">
                 </div>
 
                 <!-- Study Hours -->
                 <div>
-                    <label for="study_hours" class="block text-sm font-medium text-gray-700">Weekly Study Hours</label>
+                    <label for="study_hours" class="block text-sm font-semibold text-slate-700">Weekly study hours</label>
                     <input type="number" id="study_hours" name="study_hours" required min="0" max="100" value="20"
-                           class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border">
+                           class="mt-1.5 block w-full rounded-xl border border-slate-200 bg-slate-50/80 p-2.5">
                 </div>
 
                 <!-- Gender -->
                 <div>
-                    <label for="gender" class="block text-sm font-medium text-gray-700">Gender</label>
+                    <label for="gender" class="block text-sm font-semibold text-slate-700">Gender</label>
                     <select id="gender" name="gender" 
-                            class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border">
+                            class="mt-1.5 block w-full rounded-xl border border-slate-200 bg-slate-50/80 p-2.5">
                         <option value="F">Female</option>
                         <option value="M">Male</option>
                     </select>
@@ -1020,36 +1099,37 @@ DASHBOARD_HTML = """
                 
                 <!-- Financial Aid -->
                 <div>
-                    <label for="financial_aid" class="block text-sm font-medium text-gray-700">Receives Financial Aid</label>
+                    <label for="financial_aid" class="block text-sm font-semibold text-slate-700">Financial aid</label>
                     <select id="financial_aid" name="financial_aid" 
-                            class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border">
+                            class="mt-1.5 block w-full rounded-xl border border-slate-200 bg-slate-50/80 p-2.5">
                         <option value="1">Yes</option>
                         <option value="0">No</option>
                     </select>
                 </div>
                 
                 <button type="submit"
-                        class="w-full py-2 px-4 border border-transparent rounded-lg shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150">
-                    Predict Dropout Risk
+                        class="w-full py-3 px-4 rounded-xl font-semibold text-white bg-gradient-to-r from-indigo-600 to-violet-600 shadow-md shadow-indigo-500/25 hover:from-indigo-500 hover:to-violet-500 transition">
+                    Predict risk
                 </button>
             </form>
 
             <!-- Prediction Result -->
-            <div id="predictionResult" class="mt-6 p-4 border-2 border-gray-200 rounded-lg text-center hidden">
-                <h3 class="text-lg font-semibold text-gray-800">Predicted Risk:</h3>
-                <p id="riskText" class="text-3xl font-extrabold mt-1"></p>
-                <p class="text-sm text-gray-500 mt-1">Probability: <span id="probabilityValue" class="font-bold text-gray-700"></span>%</p>
+            <div id="predictionResult" class="mt-6 rounded-xl border-2 border-slate-200 bg-white p-5 text-center hidden">
+                <h3 class="text-xs font-bold uppercase tracking-wide text-slate-500">Result</h3>
+                <p id="riskText" class="text-2xl md:text-3xl font-extrabold mt-2 tracking-tight"></p>
+                <p class="text-sm text-slate-500 mt-2">Probability <span id="probabilityValue" class="font-bold text-slate-800 tabular-nums"></span>%</p>
             </div>
 
             <!-- Student Selector -->
-            <div class="mt-8">
-                <h2 class="text-xl font-bold text-blue-700 mb-2">Browse First 100 Students</h2>
-                <label for="studentSelect" class="block text-sm font-medium text-gray-700">Student</label>
-                <select id="studentSelect" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"></select>
-                <div id="selectedStudent" class="mt-4 p-4 border rounded-lg hidden">
-                    <div class="flex items-center justify-between">
-                        <div class="flex-1">
-                            <button id="studentNameBtn" type="button" class="font-semibold text-blue-700 hover:underline text-left" aria-expanded="false">
+            <div class="mt-10 pt-8 border-t border-slate-100">
+                <h2 class="text-lg font-bold text-slate-900 mb-1">Cohort browser</h2>
+                <p class="text-sm text-slate-500 mb-4">First 100 students in the dataset</p>
+                <label for="studentSelect" class="block text-sm font-semibold text-slate-700">Student</label>
+                <select id="studentSelect" class="mt-1.5 block w-full rounded-xl border border-slate-200 bg-slate-50/80 p-2.5"></select>
+                <div id="selectedStudent" class="mt-4 p-4 rounded-xl border border-slate-200 bg-slate-50/50 hidden">
+                    <div class="flex items-center justify-between gap-2">
+                        <div class="flex-1 min-w-0">
+                            <button id="studentNameBtn" type="button" class="font-semibold text-indigo-700 hover:text-indigo-600 text-left truncate" aria-expanded="false">
                                 <span id="studentName"></span>
                             </button>
                             <p class="text-sm text-gray-500" id="studentMeta"></p>
@@ -1084,26 +1164,31 @@ DASHBOARD_HTML = """
             <!-- Global Risk Summary -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Dropout Rate by Gender Chart -->
-                <div class="p-6 card">
-                    <h3 class="text-xl font-semibold text-blue-700 mb-4">Dropout Rate by Gender</h3>
-                    <canvas id="genderChart"></canvas>
+                <div class="p-6 md:p-7 surface-card">
+                    <h3 class="text-lg font-bold text-slate-900 mb-1 tracking-tight">Dropout rate by gender</h3>
+                    <p class="text-sm text-slate-500 mb-5">Comparative view across the cohort</p>
+                    <div class="rounded-xl bg-slate-50/80 p-3 border border-slate-100">
+                        <canvas id="genderChart"></canvas>
+                    </div>
                 </div>
                 
                 <!-- Dropout Rate by Absences Chart -->
-                <div class="p-6 card">
-                    <h3 class="text-xl font-semibold text-blue-700 mb-4">Dropout Risk by Absence Level</h3>
-                    <canvas id="absencesChart"></canvas>
+                <div class="p-6 md:p-7 surface-card">
+                    <h3 class="text-lg font-bold text-slate-900 mb-1 tracking-tight">Risk by absence level</h3>
+                    <p class="text-sm text-slate-500 mb-5">How attendance relates to outcomes</p>
+                    <div class="rounded-xl bg-slate-50/80 p-3 border border-slate-100">
+                        <canvas id="absencesChart"></canvas>
+                    </div>
                 </div>
             </div>
 
             <!-- Global Data Visualization -->
-            <div class="p-6 card">
-                <h3 class="text-xl font-semibold text-blue-700 mb-4">Risk Factor Distribution (Placeholder)</h3>
-                <!-- In a real app, this would show interactive scatter plots, etc. -->
-                <div class="bg-gray-50 p-6 rounded-lg border border-gray-200">
-                    <p class="text-gray-500">
-                        This section is reserved for interactive data visualizations (like GPA vs. Absences scatter plots) 
-                        fetched from your live MySQL database to explore global risk trends.
+            <div class="p-6 md:p-7 surface-card">
+                <h3 class="text-lg font-bold text-slate-900 mb-1 tracking-tight">Deeper analysis</h3>
+                <p class="text-sm text-slate-500 mb-5">Reserved for scatter plots and live DB exploration</p>
+                <div class="rounded-xl border border-dashed border-slate-200 bg-gradient-to-br from-slate-50 to-indigo-50/30 p-8 text-center">
+                    <p class="text-slate-600 text-sm leading-relaxed max-w-lg mx-auto">
+                        This area can host interactive charts (for example GPA vs. absences) wired to your database for global risk trends.
                     </p>
                 </div>
             </div>
@@ -1136,8 +1221,9 @@ DASHBOARD_HTML = """
             };
 
             riskText.textContent = 'Calculating...';
+            riskText.className = 'text-2xl md:text-3xl font-extrabold mt-2 tracking-tight text-slate-400';
             resultDiv.classList.remove('hidden');
-            resultDiv.className = 'mt-6 p-4 border-2 rounded-lg text-center'; // Reset classes
+            resultDiv.className = 'mt-6 rounded-xl border-2 border-slate-200 bg-white p-5 text-center'; // Reset classes
 
             try {
                 const response = await fetch('/predict', {
@@ -1154,23 +1240,26 @@ DASHBOARD_HTML = """
                 
                 riskText.textContent = result.prediction_text;
                 probabilityValue.textContent = result.probability;
+                riskText.className = 'text-2xl md:text-3xl font-extrabold mt-2 tracking-tight';
                 
                 // Styling based on risk level
                 if (result.probability > 50) {
-                    resultDiv.classList.add('border-red-500', 'bg-red-50');
-                    riskText.classList.add('text-red-600');
-                    riskText.classList.remove('text-green-600');
+                    resultDiv.classList.remove('border-slate-200', 'bg-white');
+                    resultDiv.classList.add('border-red-300', 'bg-red-50');
+                    riskText.classList.add('text-red-700');
                 } else {
-                    resultDiv.classList.add('border-green-500', 'bg-green-50');
-                    riskText.classList.add('text-green-600');
-                    riskText.classList.remove('text-red-600');
+                    resultDiv.classList.remove('border-slate-200', 'bg-white');
+                    resultDiv.classList.add('border-emerald-300', 'bg-emerald-50');
+                    riskText.classList.add('text-emerald-700');
                 }
 
             } catch (error) {
                 console.error('Prediction failed:', error);
                 riskText.textContent = 'Error';
+                riskText.className = 'text-2xl md:text-3xl font-extrabold mt-2 tracking-tight text-amber-800';
                 probabilityValue.textContent = 'N/A';
-                resultDiv.classList.add('border-yellow-500', 'bg-yellow-50');
+                resultDiv.classList.remove('border-slate-200', 'bg-white');
+                resultDiv.classList.add('border-amber-300', 'bg-amber-50');
             }
         }
 
@@ -1361,44 +1450,64 @@ STUDENTS_VIEW_HTML = """
 <head>
   <meta charset=\"UTF-8\" />
   <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />
-  <title>Students - Dropic.ai</title>
+  <title>Students — Dropic.ai</title>
   <script src=\"https://cdn.tailwindcss.com\"></script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
-    body { font-family: 'Inter', sans-serif; background: #f4f6f9; }
-    .card { background: white; border-radius: 1rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,.1), 0 2px 4px -2px rgba(0,0,0,.1); }
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+    body { font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+    .mesh-bg {
+      background-color: #f0f4fb;
+      background-image:
+        radial-gradient(ellipse 85% 55% at 50% -18%, rgba(99, 102, 241, 0.13), transparent),
+        radial-gradient(ellipse 50% 32% at 100% 0%, rgba(14, 165, 233, 0.09), transparent);
+    }
+    .surface-card {
+      background: rgba(255,255,255,0.94);
+      border: 1px solid rgba(226, 232, 240, 0.95);
+      border-radius: 1.125rem;
+      box-shadow: 0 1px 2px rgba(15,23,42,0.04), 0 14px 36px -12px rgba(15,23,42,0.1);
+    }
   </style>
   <script src=\"https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js\"></script>
   </head>
-  <body class=\"p-4 md:p-8\">
-    <div class=\"flex items-center justify-between mb-6\">
-      <h1 class=\"text-2xl md:text-3xl font-extrabold text-blue-800\">Full list of students</h1>
-      <a class=\"text-blue-600 hover:underline\" href=\"/\">Back to Home</a>
-    </div>
-    <div class=\"p-4 card\">
-      <div class=\"mb-3 flex items-center gap-2\">
-        <input id=\"searchInput\" type=\"text\" class=\"border rounded p-2 w-full md:w-96\" placeholder=\"Search by name...\" />
-        <button id=\"searchBtn\" class=\"px-3 py-2 bg-blue-600 text-white rounded\">Search</button>
-        <button id=\"clearBtn\" class=\"px-3 py-2 bg-gray-100 border rounded\">Clear</button>
+  <body class=\"mesh-bg min-h-screen text-slate-800 p-4 md:p-8 lg:p-10\">
+    <div class=\"max-w-7xl mx-auto\">
+    <header class=\"surface-card rounded-2xl px-5 py-5 md:px-8 md:py-6 mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between\">
+      <div>
+        <p class=\"text-xs font-bold uppercase tracking-widest text-indigo-600 mb-1\">Directory</p>
+        <h1 class=\"text-2xl md:text-3xl font-extrabold tracking-tight text-slate-900\">All students</h1>
+        <p class=\"text-slate-500 text-sm mt-1\">Sorted by risk — search to filter</p>
       </div>
-      <div class=\"overflow-x-auto\">
+      <div class=\"flex flex-wrap gap-2\">
+        <a class=\"inline-flex rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50 transition\" href=\"/\">Home</a>
+        <a class=\"inline-flex rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-indigo-500/25 hover:from-indigo-500 hover:to-violet-500 transition\" href=\"/dashboard\">Dashboard</a>
+      </div>
+    </header>
+    <div class=\"p-5 md:p-6 surface-card\">
+      <div class=\"mb-5 flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-2\">
+        <input id=\"searchInput\" type=\"text\" class=\"flex-1 min-w-[12rem] rounded-xl border border-slate-200 bg-slate-50/80 px-4 py-2.5 text-slate-900 placeholder:text-slate-400\" placeholder=\"Search by name...\" />
+        <button id=\"searchBtn\" class=\"rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 px-5 py-2.5 text-sm font-semibold text-white shadow-md shadow-indigo-500/20 hover:from-indigo-500 hover:to-violet-500 transition\">Search</button>
+        <button id=\"clearBtn\" class=\"rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition\">Clear</button>
+      </div>
+      <div class=\"overflow-x-auto rounded-xl border border-slate-100\">
         <table class=\"min-w-full text-sm\">
-          <thead class=\"bg-gray-100 text-gray-700\">
+          <thead class=\"bg-slate-100/90 text-slate-600 text-xs font-bold uppercase tracking-wide\">
             <tr>
-              <th class=\"text-left px-3 py-2\">#</th>
-              <th class=\"text-left px-3 py-2\">Name</th>
-              <th class=\"text-left px-3 py-2\">Gender</th>
-              <th class=\"text-left px-3 py-2\">Age</th>
-              <th class=\"text-left px-3 py-2\">Absences</th>
-              <th class=\"text-left px-3 py-2\">Aggregate Grade</th>
-              <th class=\"text-left px-3 py-2\">Risk</th>
-              <th class=\"text-left px-3 py-2\">Note</th>
-              <th class=\"text-left px-3 py-2\"></th>
+              <th class=\"text-left px-4 py-3\">#</th>
+              <th class=\"text-left px-4 py-3\">Name</th>
+              <th class=\"text-left px-4 py-3\">Gender</th>
+              <th class=\"text-left px-4 py-3\">Age</th>
+              <th class=\"text-left px-4 py-3\">Absences</th>
+              <th class=\"text-left px-4 py-3\">Grade</th>
+              <th class=\"text-left px-4 py-3\">Risk</th>
+              <th class=\"text-left px-4 py-3 min-w-[8rem]\">Note</th>
+              <th class=\"text-left px-4 py-3\"></th>
             </tr>
           </thead>
-          <tbody id=\"rows\" class=\"divide-y\"></tbody>
+          <tbody id=\"rows\" class=\"divide-y divide-slate-100 bg-white\"></tbody>
         </table>
       </div>
+    </div>
     </div>
 
     <script>
@@ -1420,23 +1529,23 @@ STUDENTS_VIEW_HTML = """
             list.forEach((s, i) => {
             const tr = document.createElement('tr');
             const risk = String(s.Risk_Category || '').toLowerCase();
-            let badge = '<span class=\"px-2 py-0.5 rounded-full text-white text-xs bg-gray-500\">Unknown</span>';
-            if (risk === 'red') badge = '<span class=\"px-2 py-0.5 rounded-full text-white text-xs bg-red-600\">Red</span>';
-            else if (risk === 'yellow') badge = '<span class=\"px-2 py-0.5 rounded-full text-white text-xs bg-yellow-500\">Yellow</span>';
-            else if (risk === 'green') badge = '<span class=\"px-2 py-0.5 rounded-full text-white text-xs bg-green-600\">Green</span>';
+            let badge = '<span class=\"inline-flex px-2.5 py-0.5 rounded-lg text-xs font-bold bg-slate-200 text-slate-700\">Unknown</span>';
+            if (risk === 'red') badge = '<span class=\"inline-flex px-2.5 py-0.5 rounded-lg text-xs font-bold bg-red-100 text-red-800 ring-1 ring-red-200/80\">Red</span>';
+            else if (risk === 'yellow') badge = '<span class=\"inline-flex px-2.5 py-0.5 rounded-lg text-xs font-bold bg-amber-100 text-amber-900 ring-1 ring-amber-200/80\">Yellow</span>';
+            else if (risk === 'green') badge = '<span class=\"inline-flex px-2.5 py-0.5 rounded-lg text-xs font-bold bg-emerald-100 text-emerald-900 ring-1 ring-emerald-200/80\">Green</span>';
             tr.innerHTML = `
-              <td class=\"px-3 py-2 text-gray-500\">${i}</td>
-              <td class=\"px-3 py-2 font-medium\">${s.Name ?? 'Student'}</td>
-              <td class=\"px-3 py-2\">${s.Gender ?? ''}</td>
-              <td class=\"px-3 py-2\">${s.Age ?? ''}</td>
-              <td class=\"px-3 py-2\">${s.Number_of_Absences ?? s.Absences ?? ''}</td>
-              <td class=\"px-3 py-2\">${s.Aggregate_Grade ?? s.Final_Grade ?? s.Grade_2 ?? s.Grade_1 ?? 'N/A'}</td>
-              <td class=\"px-3 py-2\">${badge}</td>
-              <td class=\"px-3 py-2\">${s.Risk_Description ?? ''}</td>
-              <td class=\"px-3 py-2\"><a class=\"text-blue-600 hover:underline\" href=\"/edit_student?gindex=${encodeURIComponent(String(s._idx))}\">Edit</a></td>
+              <td class=\"px-4 py-3 text-slate-400 tabular-nums\">${i}</td>
+              <td class=\"px-4 py-3 font-semibold text-slate-900\">${s.Name ?? 'Student'}</td>
+              <td class=\"px-4 py-3 text-slate-600\">${s.Gender ?? ''}</td>
+              <td class=\"px-4 py-3 tabular-nums text-slate-700\">${s.Age ?? ''}</td>
+              <td class=\"px-4 py-3 tabular-nums text-slate-700\">${s.Number_of_Absences ?? s.Absences ?? ''}</td>
+              <td class=\"px-4 py-3 tabular-nums text-slate-700\">${s.Aggregate_Grade ?? s.Final_Grade ?? s.Grade_2 ?? s.Grade_1 ?? 'N/A'}</td>
+              <td class=\"px-4 py-3\">${badge}</td>
+              <td class=\"px-4 py-3 text-slate-600 max-w-xs\">${s.Risk_Description ?? ''}</td>
+              <td class=\"px-4 py-3\"><a class=\"font-semibold text-indigo-600 hover:text-indigo-500\" href=\"/edit_student?gindex=${encodeURIComponent(String(s._idx))}\">Edit</a></td>
             `;
               if (highlight && String(s.Name || '').toLowerCase() === highlight) {
-                tr.classList.add('bg-yellow-50');
+                tr.classList.add('bg-amber-50/90', 'ring-1', 'ring-inset', 'ring-amber-200/80');
               }
             tbody.appendChild(tr);
             });
@@ -1482,32 +1591,43 @@ PRINT_REPORT_HTML = """
 <head>
   <meta charset=\"UTF-8\" />
   <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />
-  <title>Dropic.ai Report</title>
+  <title>Dropic.ai — Report</title>
   <script src=\"https://cdn.tailwindcss.com\"></script>
   <style>
-    @media print { .no-print { display: none; } }
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+    body { font-family: Inter, system-ui, sans-serif; color: #0f172a; }
+    @media print {
+      .no-print { display: none !important; }
+      body { padding: 0; background: #fff; }
+      .report-wrap { box-shadow: none !important; border: none !important; }
+    }
   </style>
 </head>
-<body class=\"p-6\">
-  <div class=\"flex items-center justify-between mb-4\">
-    <h1 class=\"text-2xl font-bold\">Dropic.ai- Dropout Predictions Report</h1>
-    <button class=\"no-print px-3 py-2 bg-gray-800 text-white rounded\" onclick=\"window.print()\">Print</button>
-  </div>
-  <div id=\"summary\" class=\"mb-4\"></div>
-  <div class=\"overflow-x-auto\">
-    <table class=\"min-w-full text-sm\">
-      <thead class=\"bg-gray-100\">
-        <tr>
-          <th class=\"text-left px-3 py-2\">Name</th>
-          <th class=\"text-left px-3 py-2\">Gender</th>
-          <th class=\"text-left px-3 py-2\">Age</th>
-          <th class=\"text-left px-3 py-2\">Absences</th>
-          <th class=\"text-left px-3 py-2\">Aggregate Grade</th>
-          <th class=\"text-left px-3 py-2\">Risk</th>
-        </tr>
-      </thead>
-      <tbody id=\"rows\" class=\"divide-y\"></tbody>
-    </table>
+<body class=\"min-h-screen bg-slate-100 p-4 md:p-8 print:bg-white print:p-0\">
+  <div class=\"report-wrap max-w-6xl mx-auto rounded-2xl border border-slate-200 bg-white p-6 md:p-10 shadow-xl shadow-slate-200/50 print:shadow-none print:border-0\">
+    <div class=\"flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-8 pb-6 border-b border-slate-100\">
+      <div>
+        <p class=\"text-xs font-bold uppercase tracking-widest text-indigo-600\">Dropic.ai</p>
+        <h1 class=\"text-2xl md:text-3xl font-bold text-slate-900 mt-1\">Dropout risk report</h1>
+      </div>
+      <button type=\"button\" class=\"no-print inline-flex items-center justify-center rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 transition\" onclick=\"window.print()\">Print</button>
+    </div>
+    <div id=\"summary\" class=\"mb-6 text-slate-700\"></div>
+    <div class=\"overflow-x-auto rounded-xl border border-slate-100\">
+      <table class=\"min-w-full text-sm\">
+        <thead class=\"bg-slate-100 text-slate-600 text-xs font-bold uppercase tracking-wide\">
+          <tr>
+            <th class=\"text-left px-4 py-3\">Name</th>
+            <th class=\"text-left px-4 py-3\">Gender</th>
+            <th class=\"text-left px-4 py-3\">Age</th>
+            <th class=\"text-left px-4 py-3\">Absences</th>
+            <th class=\"text-left px-4 py-3\">Grade</th>
+            <th class=\"text-left px-4 py-3\">Risk</th>
+          </tr>
+        </thead>
+        <tbody id=\"rows\" class=\"divide-y divide-slate-100\"></tbody>
+      </table>
+    </div>
   </div>
   <script>
     document.addEventListener('DOMContentLoaded', async () => {
@@ -1537,13 +1657,14 @@ PRINT_REPORT_HTML = """
         if (risk === 'red') label = 'Red';
         else if (risk === 'yellow') label = 'Yellow';
         else if (risk === 'green') label = 'Green';
+        const riskCls = risk === 'red' ? 'text-red-800 font-semibold' : risk === 'yellow' ? 'text-amber-800 font-semibold' : risk === 'green' ? 'text-emerald-800 font-semibold' : 'text-slate-600';
         tr.innerHTML = `
-          <td class=\"px-3 py-2\">${s.Name ?? ''}</td>
-          <td class=\"px-3 py-2\">${s.Gender ?? ''}</td>
-          <td class=\"px-3 py-2\">${s.Age ?? ''}</td>
-          <td class=\"px-3 py-2\">${s.Number_of_Absences ?? s.Absences ?? ''}</td>
-          <td class=\"px-3 py-2\">${s.Aggregate_Grade ?? s.Final_Grade ?? s.Grade_2 ?? s.Grade_1 ?? 'N/A'}</td>
-          <td class=\"px-3 py-2\">${label}</td>
+          <td class=\"px-4 py-3 font-medium text-slate-900\">${s.Name ?? ''}</td>
+          <td class=\"px-4 py-3 text-slate-700\">${s.Gender ?? ''}</td>
+          <td class=\"px-4 py-3 tabular-nums text-slate-700\">${s.Age ?? ''}</td>
+          <td class=\"px-4 py-3 tabular-nums text-slate-700\">${s.Number_of_Absences ?? s.Absences ?? ''}</td>
+          <td class=\"px-4 py-3 tabular-nums text-slate-700\">${s.Aggregate_Grade ?? s.Final_Grade ?? s.Grade_2 ?? s.Grade_1 ?? 'N/A'}</td>
+          <td class=\"px-4 py-3 ${riskCls}\">${label}</td>
         `;
         tbody.appendChild(tr);
       };
@@ -1558,10 +1679,12 @@ PRINT_REPORT_HTML = """
           const sres = await fetch('/risk_summary');
           const s = await sres.json();
           document.getElementById('summary').innerHTML = `
-            <div>Total students: <b>${s.total}</b> — 
-            <span class=\"text-red-600\">Red: <b>${s.red}</b></span>, 
-            <span class=\"text-yellow-600\">Yellow: <b>${s.yellow}</b></span>, 
-            <span class=\"text-green-600\">Green: <b>${s.green}</b></span></div>`;
+            <div class=\"rounded-xl border border-slate-100 bg-slate-50 px-4 py-3 text-sm\">
+              <span class=\"font-semibold text-slate-900\">${s.total}</span> students —
+              <span class=\"text-red-700 font-medium\">Red ${s.red}</span> ·
+              <span class=\"text-amber-700 font-medium\">Yellow ${s.yellow}</span> ·
+              <span class=\"text-emerald-700 font-medium\">Green ${s.green}</span>
+            </div>`;
         } catch (e) {
           document.getElementById('summary').textContent = 'Full report';
         }
@@ -1604,37 +1727,56 @@ def edit_student():
         <!DOCTYPE html>
         <html lang=\"en\"><head>
         <meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">
-        <title>Edit Student</title>
+        <title>Edit student — Dropic.ai</title>
         <script src=\"https://cdn.tailwindcss.com\"></script>
-        </head><body class=\"p-6\">
-        <div class=\"mb-4\"><a class=\"text-blue-600 hover:underline\" href=\"/students_view\">Back</a></div>
-        <h1 class=\"text-2xl font-bold mb-4\">Edit Student</h1>
-        <form id="editForm" class="space-y-4 max-w-xl\">
+        <style>
+          @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+          body { font-family: Inter, system-ui, sans-serif; }
+          .mesh-bg {
+            background-color: #f0f4fb;
+            background-image: radial-gradient(ellipse 85% 55% at 50% -18%, rgba(99, 102, 241, 0.13), transparent);
+          }
+          .surface-card {
+            background: rgba(255,255,255,0.94);
+            border: 1px solid rgba(226, 232, 240, 0.95);
+            border-radius: 1.125rem;
+            box-shadow: 0 14px 36px -12px rgba(15,23,42,0.1);
+          }
+        </style>
+        </head><body class=\"mesh-bg min-h-screen text-slate-800 p-4 md:p-8\">
+        <div class=\"max-w-xl mx-auto\">
+        <a class=\"inline-flex text-sm font-semibold text-indigo-600 hover:text-indigo-500 mb-6\" href=\"/students_view\">← Back to list</a>
+        <div class=\"surface-card p-6 md:p-8\">
+        <p class=\"text-xs font-bold uppercase tracking-widest text-indigo-600 mb-1\">Edit record</p>
+        <h1 class=\"text-2xl font-bold text-slate-900 mb-6\">Student details</h1>
+        <form id="editForm" class="space-y-4">
             <input type="hidden" name="gindex" value="{{ idx }}" />
-            <div><label class="block text-sm">Name</label><input name="name" class="border p-2 w-full rounded" value="{{ name }}" /></div>
-            <div class="grid grid-cols-2 gap-3"> 
-                <div><label class="block text-sm">Gender</label>
-                    <select name="gender" class="border p-2 w-full rounded"><option value="F" {{ 'selected' if gender=='F' else '' }}>Female</option><option value="M" {{ 'selected' if gender=='M' else '' }}>Male</option></select>
+            <div><label class="block text-sm font-semibold text-slate-700\">Name</label><input name="name" class="mt-1.5 border border-slate-200 bg-slate-50/80 p-2.5 w-full rounded-xl" value="{{ name }}" /></div>
+            <div class="grid grid-cols-2 gap-4"> 
+                <div><label class="block text-sm font-semibold text-slate-700\">Gender</label>
+                    <select name="gender" class="mt-1.5 border border-slate-200 bg-slate-50/80 p-2.5 w-full rounded-xl"><option value="F" {{ 'selected' if gender=='F' else '' }}>Female</option><option value="M" {{ 'selected' if gender=='M' else '' }}>Male</option></select>
                 </div>
-                <div><label class="block text-sm">Age</label><input type="number" name="age" class="border p-2 w-full rounded" value="{{ age }}" /></div>
+                <div><label class="block text-sm font-semibold text-slate-700\">Age</label><input type="number" name="age" class="mt-1.5 border border-slate-200 bg-slate-50/80 p-2.5 w-full rounded-xl" value="{{ age }}" /></div>
             </div>
-            <div class="grid grid-cols-3 gap-3">
-                <div><label class="block text-sm">Absences</label><input type="number" name="absences" class="border p-2 w-full rounded" value="{{ absences }}" /></div>
-                <div><label class="block text-sm">Aggregate Grade (0-20)</label><input type="number" step="0.1" min="0" max="20" name="aggregate_grade" class="border p-2 w-full rounded" value="{{ aggregate }}" /></div>
-                <div><label class="block text-sm">Internet</label>
-                    <select name="internet_access" class="border p-2 w-full rounded"><option value="yes" {{ 'selected' if internet=='yes' else '' }}>Yes</option><option value="no" {{ 'selected' if internet=='no' else '' }}>No</option></select>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div><label class="block text-sm font-semibold text-slate-700\">Absences</label><input type="number" name="absences" class="mt-1.5 border border-slate-200 bg-slate-50/80 p-2.5 w-full rounded-xl" value="{{ absences }}" /></div>
+                <div><label class="block text-sm font-semibold text-slate-700\">Aggregate (0–20)</label><input type="number" step="0.1" min="0" max="20" name="aggregate_grade" class="mt-1.5 border border-slate-200 bg-slate-50/80 p-2.5 w-full rounded-xl" value="{{ aggregate }}" /></div>
+                <div><label class="block text-sm font-semibold text-slate-700\">Internet</label>
+                    <select name="internet_access" class="mt-1.5 border border-slate-200 bg-slate-50/80 p-2.5 w-full rounded-xl"><option value="yes" {{ 'selected' if internet=='yes' else '' }}>Yes</option><option value="no" {{ 'selected' if internet=='no' else '' }}>No</option></select>
                 </div>
             </div>
-            <div><label class="block text-sm">Desired Risk Zone</label>
-                <select name="desired_risk_zone" class="border p-2 w-full rounded\">
-                    <option value=\"\">-- None --</option>
+            <div><label class="block text-sm font-semibold text-slate-700\">Desired risk zone</label>
+                <select name="desired_risk_zone" class="mt-1.5 border border-slate-200 bg-slate-50/80 p-2.5 w-full rounded-xl">
+                    <option value=\"\">— None —</option>
                     <option value=\"Red\">Red</option>
                     <option value=\"Yellow\">Yellow</option>
                     <option value=\"Green\">Green</option>
                 </select>
             </div>
-            <button class="px-4 py-2 bg-blue-600 text-white rounded" type="submit">Save</button>
+            <button class="w-full mt-2 py-3 px-4 rounded-xl font-semibold text-white bg-gradient-to-r from-indigo-600 to-violet-600 shadow-md shadow-indigo-500/25 hover:from-indigo-500 hover:to-violet-500 transition" type="submit">Save changes</button>
         </form>
+        </div>
+        </div>
         <script>
         document.getElementById('editForm').addEventListener('submit', async (e) => {
             e.preventDefault();
