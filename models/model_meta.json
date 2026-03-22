@@ -1,0 +1,26 @@
+{
+  "features": [
+    "Age",
+    "GPA",
+    "Absences",
+    "Financial_Aid",
+    "Study_Hours",
+    "Gender_M"
+  ],
+  "metrics": {
+    "accuracy": 0.9615384615384616,
+    "roc_auc": 0.9199999999999999,
+    "n_train": 76,
+    "n_test": 26,
+    "n_total": 102
+  },
+  "coefficients": {
+    "Age": 0.011386147161047114,
+    "GPA": -0.9289763412566993,
+    "Absences": -0.007982589406689044,
+    "Financial_Aid": -0.2764295621180825,
+    "Study_Hours": -0.8572751558676678,
+    "Gender_M": 0.4531945235171481
+  },
+  "intercept": -0.2589916209793657
+}

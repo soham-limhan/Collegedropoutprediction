@@ -1,35 +1,108 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>EduSafe Report</title>
+  <title>Dropic.ai — Report</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
   <style>
-    @media print { .no-print { display: none; } }
+    @media print {
+      .no-print { display: none !important; }
+      body { padding: 0 !important; background: #fff !important; }
+      .report-wrap { box-shadow: none !important; border: none !important; }
+    }
   </style>
 </head>
-<body class="p-6">
-  <div class="flex items-center justify-between mb-4">
-    <h1 class="text-2xl font-bold">EduSafe- Dropout Predictions Report</h1>
-    <button class="no-print px-3 py-2 bg-gray-800 text-white rounded" onclick="window.print()">Print</button>
+<body class="dp-app min-h-screen p-4 md:p-8 print:bg-white print:p-0">
+  <div class="report-wrap max-w-6xl mx-auto rounded-2xl border border-slate-200/90 bg-white p-6 md:p-10 shadow-xl shadow-indigo-950/10 print:shadow-none print:border-0">
+    <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-8 pb-6 border-b border-slate-100">
+      <div>
+        <p class="text-xs font-bold uppercase tracking-widest text-indigo-600">Dropic.ai</p>
+        <h1 class="text-2xl md:text-3xl font-bold text-slate-900 mt-1">Dropout risk report</h1>
+      </div>
+      <button type="button" class="no-print inline-flex items-center justify-center rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 transition" onclick="window.print()">Print</button>
+    </div>
+    <div id="summary" class="mb-6 text-slate-700"></div>
+    <div class="overflow-x-auto rounded-xl border border-slate-100">
+      <table class="min-w-full text-sm">
+        <thead class="bg-slate-100 text-slate-600 text-xs font-bold uppercase tracking-wide">
+          <tr>
+            <th class="text-left px-4 py-3">Name</th>
+            <th class="text-left px-4 py-3">Gender</th>
+            <th class="text-left px-4 py-3">Age</th>
+            <th class="text-left px-4 py-3">Absences</th>
+            <th class="text-left px-4 py-3">Grade</th>
+            <th class="text-left px-4 py-3">Risk</th>
+          </tr>
+        </thead>
+        <tbody id="rows" class="divide-y divide-slate-100"></tbody>
+      </table>
+    </div>
   </div>
-  <div id="summary" class="mb-4"></div>
-  <div class="overflow-x-auto">
-    <table class="min-w-full text-sm">
-      <thead class="bg-gray-100">
-        <tr>
-          <th class="text-left px-3 py-2">Name</th>
-          <th class="text-left px-3 py-2">Gender</th>
-          <th class="text-left px-3 py-2">Age</th>
-          <th class="text-left px-3 py-2">Absences</th>
-          <th class="text-left px-3 py-2">Aggregate Grade</th>
-          <th class="text-left px-3 py-2">Risk</th>
-        </tr>
-      </thead>
-      <tbody id="rows" class="divide-y"></tbody>
-    </table>
-  </div>
-  <script src="{{ url_for('static', filename='js/print_report.js') }}"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      const params = new URLSearchParams(window.location.search);
+      const idx = params.get('index');
+      const name = params.get('name');
+
+      const studentsRes = await fetch('/students');
+      const students = await studentsRes.json();
+
+      let selected = null;
+      if (idx !== null && idx !== '') {
+        const i = parseInt(idx, 10);
+        if (!Number.isNaN(i) && i >= 0 && i < students.length) {
+          selected = students[i];
+        }
+      } else if (name) {
+        selected = students.find(s => String(s.Name || '').toLowerCase() === String(name).toLowerCase());
+      }
+
+      const tbody = document.getElementById('rows');
+      tbody.innerHTML = '';
+      const renderRow = (s) => {
+        const tr = document.createElement('tr');
+        const risk = String(s.Risk_Category || '').toLowerCase();
+        let label = 'Unknown';
+        if (risk === 'red') label = 'Red';
+        else if (risk === 'yellow') label = 'Yellow';
+        else if (risk === 'green') label = 'Green';
+        const riskCls = risk === 'red' ? 'text-red-800 font-semibold' : risk === 'yellow' ? 'text-amber-800 font-semibold' : risk === 'green' ? 'text-emerald-800 font-semibold' : 'text-slate-600';
+        tr.innerHTML = `
+          <td class="px-4 py-3 font-medium text-slate-900">${s.Name ?? ''}</td>
+          <td class="px-4 py-3 text-slate-700">${s.Gender ?? ''}</td>
+          <td class="px-4 py-3 tabular-nums text-slate-700">${s.Age ?? ''}</td>
+          <td class="px-4 py-3 tabular-nums text-slate-700">${s.Number_of_Absences ?? s.Absences ?? ''}</td>
+          <td class="px-4 py-3 tabular-nums text-slate-700">${s.Aggregate_Grade ?? s.Final_Grade ?? s.Grade_2 ?? s.Grade_1 ?? 'N/A'}</td>
+          <td class="px-4 py-3 ${riskCls}">${label}</td>
+        `;
+        tbody.appendChild(tr);
+      };
+
+      if (selected) {
+        document.getElementById('summary').textContent = 'Report for: ' + (selected.Name || 'Student');
+        renderRow(selected);
+      } else {
+        // Full report: show totals summary header
+        // Fetch risk summary for counts
+        try {
+          const sres = await fetch('/risk_summary');
+          const s = await sres.json();
+          document.getElementById('summary').innerHTML = `
+            <div class="rounded-xl border border-slate-100 bg-slate-50 px-4 py-3 text-sm">
+              <span class="font-semibold text-slate-900">${s.total}</span> students —
+              <span class="text-red-700 font-medium">Red ${s.red}</span> ·
+              <span class="text-amber-700 font-medium">Yellow ${s.yellow}</span> ·
+              <span class="text-emerald-700 font-medium">Green ${s.green}</span>
+            </div>`;
+        } catch (e) {
+          document.getElementById('summary').textContent = 'Full report';
+        }
+        students.forEach(renderRow);
+      }
+    });
+  </script>
 </body>
 </html>
