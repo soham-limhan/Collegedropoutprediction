@@ -7,6 +7,7 @@ from typing import Any, Dict, Optional
 import os
 from collections import OrderedDict
 import math
+import requests as http_requests
 
 import ml_runtime
 
@@ -18,6 +19,10 @@ except ImportError:
     get_remote_address = None  # type: ignore
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# Detect Netlify serverless environment (set in netlify.toml [build.environment])
+IS_NETLIFY = os.environ.get("NETLIFY", "").lower() in ("true", "1", "yes")
+
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.environ.get("FLASK_SECRET_KEY", "dev-change-me-in-production")
 
@@ -764,13 +769,144 @@ def delete_student():
         app.logger.error(f"Delete student error: {e}")
         return jsonify({'error': str(e)}), 400
 
+@app.route('/ai_support')
+def ai_support():
+    """Serves the AI Support chat page for students, parents, and teachers."""
+    return render_template('ai_support.html')
+
+
+@app.route('/ai_support_chat', methods=['POST'])
+def ai_support_chat():
+    """Handles AI support chat messages via Ollama student-advisor LLM.
+    On Netlify (IS_NETLIFY=True) returns a graceful 503 since Ollama is not
+    available in the serverless environment.
+    """
+    # --- Netlify / serverless: Ollama is not available ---
+    if IS_NETLIFY:
+        return jsonify({
+            'error': (
+                'The AI chat feature requires a local Ollama instance and is not available '
+                'in the hosted (Netlify) deployment. Run the app locally to use AI chat.'
+            )
+        }), 503
+
+    try:
+        data = request.json or {}
+        user_message = (data.get('message') or '').strip()
+        role = (data.get('role') or 'student').strip().lower()
+        student_name = (data.get('student_name') or '').strip()
+        history = data.get('history', [])
+
+        if not user_message:
+            return jsonify({'error': 'Message is required'}), 400
+
+        # --- Build student context ---
+        json_path = os.path.join(os.path.dirname(__file__), JSON_OUTPUT_FILENAME)
+        student_context = ""
+        if student_name:
+            if os.path.exists(json_path):
+                with open(json_path, 'r', encoding='utf-8') as f:
+                    records = json.load(f)
+                df_ctx = pd.DataFrame(records)
+            else:
+                df_ctx = STUDENTS_DF.copy()
+            mask = df_ctx['Name'].astype(str).str.strip().str.lower() == student_name.lower()
+            if mask.any():
+                sel = df_ctx[mask].iloc[0].to_dict()
+                student_context = (
+                    f"Student Profile:\n"
+                    f"  Name: {sel.get('Name', 'Unknown')}\n"
+                    f"  Age: {sel.get('Age', 'N/A')}\n"
+                    f"  Gender: {sel.get('Gender', 'N/A')}\n"
+                    f"  Absences: {sel.get('Number_of_Absences', sel.get('Absences', 'N/A'))}\n"
+                    f"  Aggregate Grade: {sel.get('Aggregate_Grade', sel.get('Final_Grade', sel.get('Grade_2', sel.get('Grade_1', 'N/A'))))}\n"
+                    f"  Internet Access: {sel.get('Internet_Access', 'N/A')}\n"
+                    f"  Risk Category: {sel.get('Risk_Category', 'N/A')}\n"
+                    f"  Risk Score: {sel.get('Risk_Score', 'N/A')}\n"
+                )
+            else:
+                student_context = f"Note: Student '{student_name}' was not found in the system.\n"
+        else:
+            try:
+                if os.path.exists(json_path):
+                    with open(json_path, 'r', encoding='utf-8') as f:
+                        records = json.load(f)
+                    df_all = pd.DataFrame(records)
+                else:
+                    df_all = STUDENTS_DF.copy()
+                cats = df_all['Risk_Category'].astype(str).str.strip().str.lower() if 'Risk_Category' in df_all.columns else pd.Series([])
+                red    = int((cats == 'red').sum())
+                yellow = int((cats == 'yellow').sum())
+                green  = int((cats == 'green').sum())
+                total  = int(len(df_all))
+                student_context = (
+                    f"Cohort Overview — {total} students total:\n"
+                    f"  High Risk (Red): {red} | Medium Risk (Yellow): {yellow} | Low Risk (Green): {green}\n"
+                )
+            except Exception as exc:
+                app.logger.warning(f"Could not build cohort context: {exc}")
+                student_context = "Cohort data available in system.\n"
+
+        role_desc = {
+            'student': "You are speaking with a student. Be empathetic and motivating.",
+            'parent':  "You are speaking with a parent. Give clear, actionable guidance.",
+            'teacher': "You are speaking with a teacher. Give data-driven insights."
+        }.get(role, "You are speaking with an educator. Provide helpful guidance.")
+
+        system_prompt = (
+            f"You are 'Student Advisor', an expert AI specialising in dropout prevention.\n"
+            f"{role_desc}\n\nCurrent Data Context:\n{student_context}\n"
+            f"Be empathetic, specific, and solution-focused."
+        )
+
+        messages = [{"role": "system", "content": system_prompt}]
+        for turn in history[-10:]:
+            if turn.get('role') in ('user', 'assistant') and turn.get('content'):
+                messages.append({"role": turn['role'], "content": turn['content']})
+        messages.append({"role": "user", "content": user_message})
+
+        ollama_payload = {"model": "student-advisor", "messages": messages, "stream": False}
+        try:
+            resp = http_requests.post(
+                "http://localhost:11434/api/chat",
+                json=ollama_payload,
+                timeout=120
+            )
+            resp.raise_for_status()
+            assistant_reply = resp.json().get('message', {}).get('content', '').strip()
+            if not assistant_reply:
+                assistant_reply = "I couldn't generate a response. Please try again."
+        except http_requests.exceptions.ConnectionError:
+            return jsonify({'error': 'Cannot connect to Ollama. Please ensure the student-advisor model is running on localhost:11434.'}), 503
+        except http_requests.exceptions.Timeout:
+            return jsonify({'error': 'The AI model took too long to respond. Please try a shorter question.'}), 504
+        except Exception as e:
+            app.logger.error(f"Ollama error: {e}")
+            return jsonify({'error': f'AI model error: {str(e)}'}), 500
+
+        return jsonify({'reply': assistant_reply, 'role': role})
+
+    except Exception as e:
+        app.logger.error(f"ai_support_chat error: {e}")
+        return jsonify({'error': str(e)}), 400
+
+
+@app.route('/api/students_list')
+def api_students_list():
+    """Return a compact list of student names for the AI support dropdown."""
+    try:
+        names = STUDENTS_DF['Name'].dropna().astype(str).tolist() if 'Name' in STUDENTS_DF.columns else []
+        return jsonify({'students': names})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
 if __name__ == '__main__':
     # Log the successful training and start the server
     print("----------------------------------------------------------------------")
     print("FLASK APP READY: Running Dropout Predictor.")
     print("Access the homepage at: http://127.0.0.1:5000/")
     print("Dashboard at: http://127.0.0.1:5000/dashboard")
+    print("AI Support at: http://127.0.0.1:5000/ai_support")
     print("----------------------------------------------------------------------")
-    # In a production environment, you would use a WSGI server (like gunicorn)
-    # and properly load the model from a file using joblib or pickle.
     app.run(debug=True)

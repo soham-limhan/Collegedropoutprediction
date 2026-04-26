@@ -1,0 +1,20 @@
+[build]
+  command   = "pip install -r requirements.txt && python scripts/prebuild.py"
+  publish   = "static"
+  functions = "netlify/functions"
+
+[functions]
+  # Use the included Python runtime (AWS Lambda compatible)
+  node_bundler = "esbuild"
+
+# Redirect everything to the Flask handler
+[[redirects]]
+  from   = "/*"
+  to     = "/.netlify/functions/app/:splat"
+  status = 200
+  force  = true
+
+[build.environment]
+  PYTHON_VERSION = "3.11"
+  FLASK_ENV      = "production"
+  NETLIFY        = "true"

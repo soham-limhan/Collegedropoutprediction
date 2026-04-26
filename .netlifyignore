@@ -1,0 +1,14 @@
+# Exclude these from the Netlify function bundle to reduce zip size
+__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+.vscode/
+.git/
+tests/
+app_new.py
+dashboard_app.py
+scripts/extract_templates.py
+scripts/fix_template_escapes.py
+scripts/strip_inline_html.py
+README.md
